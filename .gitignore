@@ -1,0 +1,14 @@
+# Fichiers de configuration locaux
+*.local.json
+*.local.ps1
+
+# Credentials et secrets
+*credentials*
+*secrets*
+
+# Logs
+*.log
+
+# Dossiers temporaires
+temp/
+tmp/
