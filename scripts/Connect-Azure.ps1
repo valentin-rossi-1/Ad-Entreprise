@@ -1,6 +1,3 @@
-# Ouvrez le fichier Connect-Azure.ps1 dans un éditeur de texte
-# Remplacez le contenu par ce qui suit
-
 # Script de connexion à Azure et Microsoft Graph (Entra ID)
 # ---------------------------------------------------
 
@@ -8,15 +5,22 @@
 Write-Host "Connexion à Azure..." -ForegroundColor Green
 Connect-AzAccount -UseDeviceAuthentication
 
+# Récupérer l'ID du tenant
+$context = Get-AzContext
+$tenantId = $context.Tenant.Id
+Write-Host "Tenant ID: $tenantId" -ForegroundColor Yellow
+
 # Connexion à Microsoft Graph avec authentification interactive
 Write-Host "Connexion à Microsoft Graph..." -ForegroundColor Green
-Connect-MgGraph -Scopes "Directory.ReadWrite.All", "User.ReadWrite.All", "Group.ReadWrite.All", "Application.ReadWrite.All", "Policy.ReadWrite.All" -UseDeviceAuthentication
+Connect-MgGraph -TenantId $tenantId -Scopes @("Directory.ReadWrite.All", "User.ReadWrite.All", "Group.ReadWrite.All", "Application.ReadWrite.All", "Policy.ReadWrite.All") -UseDeviceAuthentication
 
 # Afficher les informations du tenant connecté
 Write-Host "Récupération des informations du tenant..." -ForegroundColor Green
 try {
-    Get-MgOrganization | Select-Object DisplayName, Id
+    $org = Get-MgOrganization
     Write-Host "Connexion réussie!" -ForegroundColor Green
+    Write-Host "Tenant Name: $($org.DisplayName)" -ForegroundColor Green
+    Write-Host "Tenant ID: $($org.Id)" -ForegroundColor Green
 } catch {
     Write-Host "Erreur lors de la récupération des informations du tenant: $_" -ForegroundColor Red
-}
+
